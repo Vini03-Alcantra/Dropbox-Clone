@@ -17,8 +17,13 @@ class DropBoxController{
 
         this.inputFilesEl.addEventListener('change', event => {
             this.uploadTask(event.target.files);
-            this.snackModalEl.style.display = 'block'
+            this.modalShow()
+            this.inputFilesEl.value = ""
         })
+    }
+
+    modalShow(show = true){
+        this.snackModalEl.style.display = (show) ? 'block':'none'
     }
 
 
@@ -30,6 +35,7 @@ class DropBoxController{
                 let ajax = new XMLHttpRequest();
                 ajax.open("POST", "/upload")
                 ajax.onload = event => {
+                    this.modalShow(false)
                     try {
                         resolve(JSON.parse(ajax.responseText))
                     } catch (error) {
@@ -37,6 +43,7 @@ class DropBoxController{
                     }
                 };
                 ajax.onerror = event => {
+                    this.modalShow(false)
                     reject(event)
                 }
 
