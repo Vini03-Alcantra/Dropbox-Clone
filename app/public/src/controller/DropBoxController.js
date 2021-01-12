@@ -37,6 +37,10 @@ class DropBoxController{
                     reject(event)
                 }
 
+                ajax.onprogress = event => {
+                    console.log(event)
+                }
+
                 let formData = new FormData();
                 formData.append('input-file', file);
                 ajax.send(formData);
