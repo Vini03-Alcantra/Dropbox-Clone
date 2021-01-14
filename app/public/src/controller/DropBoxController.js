@@ -310,11 +310,16 @@ class DropBoxController{
         let li = document.createElement('li');
         li.dataset.key = key;
         li.innerHTML = `
-        <li>
             ${this.getFileIconView(file)}    
-            <div class="name text-center">Meus Documentos</div>
-        </li>
-        `
+            <div class="name text-center">Meus Documentos</div>`
+
+            this.initEventsLi(li)
         return li
+    }
+
+    initEventsLi(li){
+        li.addEventListener('click', e => {
+            li.classList.toggle('selected')
+        })
     }
 }
