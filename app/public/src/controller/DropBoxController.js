@@ -8,6 +8,12 @@ class DropBoxController{
         this.nameFileEl = this.snackModalEl.querySelector('.filename');
         this.timeLeftEl = this.snackModalEl.querySelector('.timeleft');
         this.listFilesEl = document.getElementById('list-of-files-and-directories')
+        
+        this.btnNewFolder = document.querySelector('#btn-new-folder');
+        this.btnRename = document.querySelector('#btn-rename');
+        this.btnDelete = document.querySelector('#btn-delete');
+
+        
         this.connectFirebase();
         this.initEvents();
         this.readFiles()
