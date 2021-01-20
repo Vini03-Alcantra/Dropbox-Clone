@@ -39,10 +39,28 @@ class DropBoxController{
 
     }
 
+    getSelection(){
+        return this.listFilesEl.querySelectorAll('.selected');
+    }    
+
     initEvents(){
 
         this.listFilesEl.addEventListener('selectionchange', e=>{
-            console.log('selectionchange')
+            switch(this.getSelection().length){
+                case 0:
+                    this.btnDelete.style.display = 'none';
+                    this.btnRename.style.display = 'none';
+                break;
+
+                case 1:
+                    this.btnDelete.style.display = 'block';
+                    this.btnRename.style.display = 'block';
+                break;
+
+                default:
+                    this.btnDelete.style.display = 'block';
+                    this.btnRename.style.display = 'none';
+            }
         })
         this.btnSendFileEl.addEventListener('click', event => {
             this.inputFilesEl.click();
@@ -329,8 +347,7 @@ class DropBoxController{
     }
 
     initEventsLi(li){
-        li.addEventListener('click', e => {
-            this.listFilesEl.dispatchEvent(this.onselectionchange);
+        li.addEventListener('click', e => {            
             if(e.shiftKey){
                 let firstLi = this.listFilesEl.querySelector('.selected');
                 if (firstLi) {
@@ -348,6 +365,8 @@ class DropBoxController{
                             el.classList.add('selected')
                         }
                     });
+
+                    this.listFilesEl.dispatchEvent(this.onselectionchange);
                     return true;
                 }
             }
@@ -359,6 +378,7 @@ class DropBoxController{
                 })
             }
             li.classList.toggle('selected')
+            this.listFilesEl.dispatchEvent(this.onselectionchange);
         })
     }
 }
