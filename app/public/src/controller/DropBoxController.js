@@ -44,13 +44,16 @@ class DropBoxController{
     }    
 
     removeTask(){
-        let promise = [];
+        let promises = [];
 
         this.getSelection().forEach(li=>{
             let file = JSON.parse(li.dataset.file);
-            promises.push(new Promise((resolve, reject) =>{
-                 
-            }));
+            let formData = new FormData();
+
+            formData.append('path', file.path);
+            formData.append('key', file.key)
+            promises.push(this.ajax('/file', 'DELETE', formData));
+            return Promise.all(promises)
         })
     }
 
