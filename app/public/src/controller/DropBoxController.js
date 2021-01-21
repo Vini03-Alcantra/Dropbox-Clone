@@ -44,6 +44,13 @@ class DropBoxController{
     }    
 
     initEvents(){
+        this.btnDelete.addEventListener('click', e=>{
+            this.removeTask().then(response=>{
+                console.log(response)
+            }).catch(err=>{
+                console.error(err);
+            })
+        })
 
         this.btnRename.addEventListener('click', e=>{
             let li = this.getSelection()[0];
