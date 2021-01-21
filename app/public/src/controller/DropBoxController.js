@@ -43,24 +43,10 @@ class DropBoxController{
         return this.listFilesEl.querySelectorAll('.selected');
     }    
 
-    removeTask(){
-        let promises = [];
-
-        this.getSelection().forEach(li=>{
-            let file = JSON.parse(li.dataset.file);
-            let formData = new FormData();
-
-            formData.append('path', file.path);
-            formData.append('key', file.key)
-            promises.push(this.ajax('/file', 'DELETE', formData));
-            return Promise.all(promises)
-        })
-    }
-
     initEvents(){
         this.btnDelete.addEventListener('click', e=>{
             this.removeTask().then(response=>{
-                console.log(response)
+                console.log("response")
             }).catch(err=>{
                 console.error(err);
             })
@@ -148,6 +134,20 @@ class DropBoxController{
                 onloadstart();
                 ajax.send(formData);
         })
+    }
+
+    removeTask(){
+        let promises = [];
+
+        this.getSelection().forEach(li=>{
+            let file = JSON.parse(li.dataset.file);
+            let formData = new FormData();
+
+            formData.append('path', file.path);
+            formData.append('key', file.key)
+            promises.push(this.ajax('DELETE', '/file', formData));            
+        })
+        return Promise.all(promises)
     }
 
     uploadTask(files){
