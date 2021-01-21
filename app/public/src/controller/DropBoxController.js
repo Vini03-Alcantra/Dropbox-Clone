@@ -43,6 +43,17 @@ class DropBoxController{
         return this.listFilesEl.querySelectorAll('.selected');
     }    
 
+    removeTask(){
+        let promise = [];
+
+        this.getSelection().forEach(li=>{
+            let file = JSON.parse(li.dataset.file);
+            promises.push(new Promise((resolve, reject) =>{
+                 
+            }));
+        })
+    }
+
     initEvents(){
         this.btnDelete.addEventListener('click', e=>{
             this.removeTask().then(response=>{
@@ -114,6 +125,27 @@ class DropBoxController{
         this.snackModalEl.style.display = (show) ? 'block':'none'
     }
 
+    ajax(method="GET", url, formData = new FormData(), onProgress = function(){}, onloadstart = function(){}){
+        return new Promise((resolve, reject)=>{
+            let ajax = new XMLHttpRequest();
+                ajax.open(method, url)
+                ajax.onload = event => {                    
+                    try {
+                        resolve(JSON.parse(ajax.responseText))
+                    } catch (error) {
+                        reject(e)
+                    }
+                };
+                ajax.onerror = event => {                    
+                    reject(event)
+                }
+
+                ajax.upload.onprogress = onProgress;
+
+                onloadstart();
+                ajax.send(formData);
+        })
+    }
 
     uploadTask(files){
         let promises = [];
