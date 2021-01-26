@@ -453,6 +453,13 @@ class DropBoxController{
         }
         this.navEl.innerHTML = nav.innerHTML;  
         
+        this.navEl.querySelectorAll('a').forEach(a=>{
+            a.addEventListener("click", e=>{
+                e.preventDefault()
+                this.currentFolder = a.dataset.path.split('/')
+                this.openFolder()
+            })
+        })
     }
 
     initEventsLi(li){
