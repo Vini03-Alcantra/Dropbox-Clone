@@ -60,10 +60,10 @@ class DropBoxController{
         })
 
         this.btnDelete.addEventListener('click', e=>{
-            this.removeTask().then(response=>{
-                response.forEach(response=>{
-                    if (response.fields.key) {
-                        this.getFirebaseRef().child(response.fields.key).remove();
+            this.removeTask().then(responses=>{
+                responses.forEach(response=>{
+                    if (response.fileds.key) {
+                        this.getFirebaseRef().child(response.fileds.key).remove();
                     }
                 })
             }).catch(err=>{
@@ -169,11 +169,19 @@ class DropBoxController{
             let file = JSON.parse(li.dataset.file);
             let key = li.dataset.key;
 
-            let formData = new FormData();
+            promises.push(new Promise((resolve, reject) =>{
+                let fileRef = firebase.storage().ref(this.currentFolder.join('/')).child(file.name)
 
-            formData.append('path', file.path);
-            formData.append('key', key)
-            promises.push(this.ajax('DELETE', '/file', formData));            
+                fileRef.delete().then(() => {
+                    resolve({
+                        fileds:{
+                            key
+                        }
+                    })
+                }).catch(err => {
+                    reject(err)
+                })
+            }))
         })
         return Promise.all(promises)
     }
