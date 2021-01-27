@@ -170,20 +170,23 @@ class DropBoxController{
             let key = li.dataset.key;
 
             promises.push(new Promise((resolve, reject) =>{
-                let fileRef = firebase.storage().ref(this.currentFolder.join('/')).child(file.name)
+                this.currentFolder.join('/');
+                file.name
 
-                fileRef.delete().then(() => {
-                    resolve({
-                        fileds:{
-                            key
-                        }
-                    })
-                }).catch(err => {
-                    reject(err)
+                resolve({
+                    fileds:{
+                        key
+                    }
                 })
             }))
         })
         return Promise.all(promises)
+    }
+
+    removeFile(ref, name){
+        let fileRef = firebase.storage().ref(ref).child(name)
+
+        return fileRef.delete();
     }
 
     uploadTask(files){
