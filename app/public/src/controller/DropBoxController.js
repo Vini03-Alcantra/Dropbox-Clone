@@ -162,6 +162,44 @@ class DropBoxController{
         })
     }
 
+    removeFolderTask(ref, name){
+        return new Promise((resolve, reject) => {
+            let folderRef = this.getFirebaseRef(ref + '/' + name);
+
+            folderRef.on('value', snapshot => {
+                snapshot.forEach(item=>{
+                    let data = item.val();
+                    data.key = item.key
+
+                    if(data.type === 'folder'){
+                        this.removeFolderTask(ref + '/' + name, data.name).then(() => {
+                            resolve({
+                                fileds:{
+                                    key: data.key
+                                }
+                            })
+                        }).catch(err => {
+                            reject(err)
+                        })
+                    }else if(data.type){
+                        this.removeFile(ref + '/' + name, data.name).then(() => {
+                            resolve({
+                                fileds:{
+                                    key: data.key
+                                }
+                            })
+                        }).catch(err => {
+                            reject(err)
+                        })
+                    }
+                })
+
+                folderRef.remove();
+                folderRef.off('value')
+            })
+        })
+    }
+
     removeTask(){
         let promises = [];
 
@@ -170,14 +208,23 @@ class DropBoxController{
             let key = li.dataset.key;
 
             promises.push(new Promise((resolve, reject) =>{
-                this.currentFolder.join('/');
-                file.name
-
-                resolve({
-                    fileds:{
-                        key
-                    }
-                })
+                if (file.type === 'folder') {
+                    this.removeFolderTask(this.currentFolder.join('/'), file.name).then(() =>{
+                        resolve({
+                            fileds:{
+                                key
+                            }
+                        })
+                    })                
+                } else if(file.type){
+                    this.removeFile(this.currentFolder.join('/'), file.name).then(() =>{
+                        resolve({
+                            fileds:{
+                                key
+                            }
+                        })
+                    })                
+                }
             }))
         })
         return Promise.all(promises)
