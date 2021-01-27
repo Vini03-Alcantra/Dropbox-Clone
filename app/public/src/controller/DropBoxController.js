@@ -106,9 +106,15 @@ class DropBoxController{
         this.inputFilesEl.addEventListener('change', event => {
             this.btnSendFileEl.disabled = true
             this.uploadTask(event.target.files).then(responses => {
+                console.log(responses)
                 responses.forEach(resp => {                    
-                    this.getFirebaseRef().push().set(resp.files['input-file'])
-                });
+                    this.getFirebaseRef().push().set({
+                        name: resp.name,
+                        type: resp.contentType,
+                        path: resp.customMetadata.downloadURL,
+                        size: resp.size
+                    })
+                })
                 this.uploadComplete();
             }).catch(err => {
                 this.uploadComplete();
@@ -183,13 +189,25 @@ class DropBoxController{
                 let task = fileRef.put(file)
 
                 task.on('state_changed', snapshot => {
-                    console.log("progress", snapshot)
+
+                    this.uploadProgress({
+                        loaded: snapshot.bytesTransferred, 
+                        total: snapshot.totalBytes
+                    }, file)                    
+
                 }, error => {
                     console.error(error)
                     reject(error)
-                }, snapshot => {
-                    console.log('success', snapshot)
-                    resolve()
+                }, () => {
+                    // fileRef.getMetadata().then(metadata => {
+                    //     resolve(metadata)
+                    task.snapshot.ref.getDownloadURL().then(downloadURL => {
+                        task.snapshot.ref.updateMetadata({customMetadata:{downloadURL}}).then(metadata => {
+                            resolve(metadata)
+                        })
+                    }).catch(err => {
+                        reject(err)
+                    })
                 });
             }));
         }); 
@@ -218,7 +236,7 @@ class DropBoxController{
             return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
         }
         if (minutes > 0) {
-            return `${minutes} minutos e ${segundos}`;
+            return `${minutes} minutos e ${seconds}`;
         }
         if (seconds > 0) {
             return `${seconds} segundos`;
